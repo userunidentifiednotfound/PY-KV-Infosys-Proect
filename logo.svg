@@ -1,0 +1,24 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vaultGlow" x1="32" y1="20" x2="128" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="0.55" stop-color="#B9F0FF"/>
+      <stop offset="1" stop-color="#6BE5FF"/>
+    </linearGradient>
+    <linearGradient id="vaultCore" x1="44" y1="30" x2="118" y2="126" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#102A45"/>
+      <stop offset="1" stop-color="#1D5E7C"/>
+    </linearGradient>
+  </defs>
+  <rect x="26" y="18" width="108" height="124" rx="32" fill="url(#vaultGlow)" fill-opacity="0.16"/>
+  <rect x="34" y="26" width="92" height="108" rx="28" fill="url(#vaultCore)"/>
+  <rect x="47" y="39" width="66" height="82" rx="22" stroke="url(#vaultGlow)" stroke-width="4"/>
+  <circle cx="80" cy="80" r="20" stroke="url(#vaultGlow)" stroke-width="5"/>
+  <path d="M80 58V102" stroke="url(#vaultGlow)" stroke-width="5" stroke-linecap="round"/>
+  <path d="M58 80H102" stroke="url(#vaultGlow)" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="80" cy="80" r="4.5" fill="#FFFFFF"/>
+  <path d="M112 58L126 44" stroke="#F8CA68" stroke-width="6" stroke-linecap="round"/>
+  <path d="M121 35C124.866 35 128 38.134 128 42V46H114V42C114 38.134 117.134 35 121 35Z" fill="#F8CA68"/>
+  <path d="M126 44H136" stroke="#F8CA68" stroke-width="6" stroke-linecap="round"/>
+  <path d="M133 40V48" stroke="#F8CA68" stroke-width="5" stroke-linecap="round"/>
+</svg>

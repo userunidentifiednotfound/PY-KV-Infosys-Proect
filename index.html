@@ -3,93 +3,246 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>PyKV Web Console</title>
+    <title>Valut Sync Control Console</title>
     <link rel="stylesheet" href="/static/style.css">
-        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 </head>
 <body>
     <main class="app">
+        <div class="top-actions">
             <button id="dashboard-logout" class="dashboard-logout">Sign Out</button>
+        </div>
+
         <div class="wrapper" id="login-card">
             <div class="title-row">
                 <h2>Sign In</h2>
-                <div id="auth-status" class="auth-status">Not signed in</div>
+                <div class="mini-badge">Secure access</div>
             </div>
 
             <form id="login-form">
                 <h1>Login</h1>
-            <div class="input-box">
-                <input id="username" type="text" placeholder="username" value="admin" required autofocus>
-                <i class='bx bxs-user'></i>
-            </div>
-            <div class="input-box">
-                <input type="password" id="password" type="password" value="admin123" required  placeholder="Password">
-                <i class='bx bxs-lock-alt'></i>
-            </div>
-            <div class="remember-forget">
-                <label ><input type="checkbox" >
-                Remember me</label>
-                <a href="#"> Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn">Log in</button>
-            <div class="register-link">
-                <p>Don't have a account?  <a href="#">Register</a></p>
-            </div>
-            </form>
-            </div>
-        </div>
-        
-
-        <div class="side-by-side-container">
-            
-
-            <section class="card" id="info-card">
-                <h2>Server Info</h2>
-                <div class="row">
-                    <button id="health-btn">Check Health</button>
-                    <button id="clear-log">Clear Saved Token</button>
+                <p class="login-sub">Use your admin credentials to unlock the primary store tools.</p>
+                <div class="input-box">
+                    <input id="username" type="text" placeholder="username" value="admin" required autofocus>
                 </div>
-                <pre id="output" class="output">Ready.</pre>
-            </section>
+                <div class="input-box">
+                    <input type="password" id="password" value="admin123" required placeholder="Password">
+                </div>
+                <div class="remember-forget">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="#">Forgot Password?</a>
+                </div>
+                <div class="login-action">
+                    <div class="login-scene" aria-hidden="true">
+                        <span class="scene-key">
+                            <span class="key-head"></span>
+                            <span class="key-stem"></span>
+                            <span class="key-tooth tooth-one"></span>
+                            <span class="key-tooth tooth-two"></span>
+                        </span>
+                        <span class="scene-door">
+                            <span class="door-panel"></span>
+                            <span class="door-glow"></span>
+                            <span class="door-knob"></span>
+                            <span class="door-keyhole"></span>
+                        </span>
+                    </div>
+                    <button type="submit" class="btn login-btn">Log in</button>
+                </div>
+                <div class="register-link">
+                    <p>Need a new account? <a href="#">Register</a></p>
+                </div>
+            </form>
         </div>
-        <!-- LRU CACHE STATUS -->
-<section class="card" id="lru-card">
-    <h2>LRU Cache Status</h2>
 
-    <div class="row">
-        <button id="refresh-lru">Refresh LRU</button>
-    </div>
+        <section class="dashboard-shell" id="dashboard-shell">
+            <aside class="side-nav" id="side-nav">
+                <div class="side-brand">
+                    <div class="brand-lockup">
+                        <img src="/static/logo.svg" alt="Valut Sync logo" class="brand-logo">
+                        <div>
+                    <span class="side-eyebrow">Workspace</span>
+                    <h2>Valut Sync</h2>
+                    <p>Navigate quickly across the control surface.</p>
+                        </div>
+                    </div>
+                    <a class="side-library-btn" href="/library">
+                        <span class="side-library-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 0-3 3z"/>
+                                <path d="M8 20V4"/>
+                            </svg>
+                        </span>
+                        <span>Library Management System</span>
+                    </a>
+                </div>
 
-    <div id="lru-container" class="lru-container"></div>
+                <nav class="nav-links">
+                    <a href="#overview" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.75v-5.5h-4.5V21H5a1 1 0 0 1-1-1z"/></svg>
+                        </span>
+                        <span>Overview</span>
+                    </a>
+                    <a href="#info-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a9 9 0 1 1 0 18 9 9 0 0 1 0-18Zm0 4.2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Zm-1.5 5.1V15h1V9.9H9.9V12h.6Zm2.5 2.7h1.1V9.9h-1.6V12h.5Z"/></svg>
+                        </span>
+                        <span>Server Info</span>
+                    </a>
+                    <a href="#lru-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6h12v4H6zm0 6h7v4H6zm9 0h3v8h-3zM4 4h16v16H4z" fill="none"/><path d="M4 4h16v16H4zm2 2v4h12V6zm0 6v4h7v-4zm9 0v8h3v-8z"/></svg>
+                        </span>
+                        <span>LRU Cache</span>
+                    </a>
+                    <a href="#kv-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h12v3H6zm0 5h8v3H6zm0 5h12v3H6z"/></svg>
+                        </span>
+                        <span>Key-Value</span>
+                    </a>
+                    <a href="#wal-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h8l4 4v12H7z"/><path d="M15 4v4h4" fill="#06131f"/></svg>
+                        </span>
+                        <span>WAL</span>
+                    </a>
+                    <a href="#replication-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h7l-2.5-2.5L13 3l5 5-5 5-1.5-1.5L14 9H7zm10 10H10l2.5 2.5L11 21l-5-5 5-5 1.5 1.5L10 15h7z"/></svg>
+                        </span>
+                        <span>Replication</span>
+                    </a>
+                    <a href="#cli-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 8 4 4-4 4-1.5-1.5L7.5 12 4.5 9.5zm6 7h7v2h-7z"/></svg>
+                        </span>
+                        <span>CLI</span>
+                    </a>
+                </nav>
+            </aside>
 
-    <pre id="lru-info" class="output">
-LRU details will appear here.
-    </pre>
-</section>
+            <div class="dashboard-content">
+                <section class="hero-panel" id="overview">
+                    <div class="hero-copy">
+                        <span class="eyebrow">Primary control console</span>
+                        <h1>Valut Sync Main Dashboard</h1>
+                        <p>
+                            Manage the primary store, inspect WAL activity, and track replication from one
+                            control surface with a more app-like layout and easier movement across every tool.
+                        </p>
+                    </div>
+                    <div class="hero-side">
+                        <div class="hero-pill">
+                            <span class="pill-label">Session</span>
+                            <span id="auth-status" class="pill-value auth-status">Not signed in</span>
+                        </div>
+                        <div class="hero-pill">
+                            <span class="pill-label">Mode</span>
+                            <span class="pill-value">Primary</span>
+                        </div>
+                    </div>
+                </section>
 
-        <section class="card" id="kv-card">
-            <h2>Key-Value Operations</h2>
+                <section class="card" id="info-card">
+                    <h2>Server Info</h2>
+                    <p class="card-sub">Check primary health or clear the locally saved token for a fresh session.</p>
+                    <div class="row">
+                        <button id="health-btn">Check Health</button>
+                        <button id="clear-log">Clear Saved Token</button>
+                    </div>
+                    <pre id="output" class="output">Ready.</pre>
+                </section>
 
-            <div class="forms-container">
-                <form id="set-form" class="form-box">
-                    <h3>Set Key</h3>
-                    <label>Key<input id="set-key" required></label>
-                    <label>Value<input id="set-value" required></label>
-                    <label>TTL (seconds, optional)<input id="set-ttl" type="number" min="1"></label>
-                    <div class="row"><button type="submit">Set Key</button></div>
-                </form>
+                <section class="card" id="lru-card">
+                    <h2>LRU Cache Status</h2>
+                    <p class="card-sub">Visualize the active cache order from oldest to newest entry.</p>
+                    <div class="row">
+                        <button id="refresh-lru">Refresh LRU</button>
+                    </div>
+                    <div id="lru-container" class="lru-container"></div>
+                    <pre id="lru-info" class="output">LRU details will appear here.</pre>
+                </section>
 
-                <form id="get-form" class="form-box">
-                    <h3>Get Key</h3>
-                    <label>Key<input id="get-key" required></label>
-                    <div class="row"><button type="submit">Get Key</button></div>
-                </form>
+                <section class="card" id="kv-card">
+                    <h2>Key-Value Operations</h2>
+                    <p class="card-sub">Set, fetch, or delete keys from the primary in-memory store.</p>
+                    <div class="forms-container">
+                        <form id="set-form" class="form-box">
+                            <h3>Set Key</h3>
+                            <label>Key<input id="set-key" required></label>
+                            <label>Value<input id="set-value" required></label>
+                            <label>TTL (seconds, optional)<input id="set-ttl" type="number" min="1"></label>
+                            <div class="row"><button type="submit">Set Key</button></div>
+                        </form>
 
-                <form id="delete-form" class="form-box">
-                    <h3>Delete Key</h3>
-                    <label>Key<input id="delete-key" required></label>
-                    <div class="row"><button type="submit" class="danger">Delete Key</button></div>
-                </form>
+                        <form id="get-form" class="form-box">
+                            <h3>Get Key</h3>
+                            <label>Key<input id="get-key" required></label>
+                            <div class="row"><button type="submit">Get Key</button></div>
+                        </form>
+
+                        <form id="delete-form" class="form-box">
+                            <h3>Delete Key</h3>
+                            <label>Key<input id="delete-key" required></label>
+                            <div class="row"><button type="submit" class="danger">Delete Key</button></div>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="card" id="wal-card">
+                    <h2>Write-Ahead Log (WAL)</h2>
+                    <p class="card-sub">Inspect persistence details and trigger manual compaction when needed.</p>
+                    <div class="row">
+                        <button id="refresh-wal">Refresh WAL Info</button>
+                        <button id="compact-wal">Run Compaction</button>
+                    </div>
+                    <div class="wal-stats">
+                        <div class="stat-box">
+                            <h4>Log Size</h4>
+                            <p id="wal-size">--</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Total Log Entries</h4>
+                            <p id="wal-entries">--</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Last Compaction</h4>
+                            <p id="wal-compaction">--</p>
+                        </div>
+                    </div>
+                    <pre id="wal-info" class="output">WAL details will appear here.</pre>
+                </section>
+
+                <section class="card" id="replication-card">
+                    <h2>Replication Status</h2>
+                    <p class="card-sub">Check replica health and force a sync when you want the secondary to catch up.</p>
+                    <div class="row">
+                        <button id="check-replica">Check Replica</button>
+                        <button id="sync-replica">Force Sync</button>
+                    </div>
+                    <div class="wal-stats two-col">
+                        <div class="stat-box">
+                            <h4>Replica Status</h4>
+                            <p id="replica-status">--</p>
+                        </div>
+                        <div class="stat-box">
+                            <h4>Last Sync</h4>
+                            <p id="replica-sync">--</p>
+                        </div>
+                    </div>
+                    <pre id="replica-info" class="output">Replication details will appear here.</pre>
+                </section>
+
+                <section class="card" id="cli-card">
+                    <h2>Command Console (CLI Simulation)</h2>
+                    <p class="card-sub">Run quick `SET`, `GET`, or `DEL` commands without leaving the dashboard.</p>
+                    <div class="row">
+                        <input id="cli-input" placeholder="Enter command (SET key value)">
+                        <button id="run-cli">Run</button>
+                    </div>
+                    <pre id="cli-output" class="output">CLI output will appear here.</pre>
+                </section>
             </div>
         </section>
     </main>

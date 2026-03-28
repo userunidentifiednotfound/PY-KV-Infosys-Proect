@@ -1,0 +1,60 @@
+{
+  "books": [
+    {
+      "id": "2a06e9fc-6732-4cba-9ef9-1f97c6fafcd1",
+      "title": "Atomic Habits",
+      "author": "James Clear",
+      "category": "Self Growth",
+      "copies": 7,
+      "available": 6,
+      "borrowed": 1,
+      "borrowers": [
+        {
+          "name": "Ishita",
+          "borrowed_at": "2026-03-28 12:17:15"
+        }
+      ],
+      "created_at": "2026-03-28 12:17:15",
+      "updated_at": "2026-03-28 12:28:19"
+    },
+    {
+      "id": "a8c131c9-12a3-4a0e-8e94-9b382477ccee",
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "category": "Engineering",
+      "copies": 5,
+      "available": 3,
+      "borrowed": 2,
+      "borrowers": [
+        {
+          "name": "Varun",
+          "borrowed_at": "2026-03-28 12:28:31"
+        },
+        {
+          "name": "Vk",
+          "borrowed_at": "2026-03-28 12:28:43"
+        }
+      ],
+      "created_at": "2026-03-28 12:17:15",
+      "updated_at": "2026-03-28 12:28:43"
+    },
+    {
+      "id": "39e3d630-cf35-44fa-94cd-a7db55b0bcd3",
+      "title": "The Psychology of Money",
+      "author": "Morgan Housel",
+      "category": "Finance",
+      "copies": 4,
+      "available": 3,
+      "borrowed": 1,
+      "borrowers": [
+        {
+          "name": "Riya",
+          "borrowed_at": "2026-03-28 12:17:15"
+        }
+      ],
+      "created_at": "2026-03-28 12:17:15",
+      "updated_at": "2026-03-28 12:17:15"
+    }
+  ],
+  "updated_at": 1774681123.9498377
+}

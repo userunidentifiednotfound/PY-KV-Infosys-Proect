@@ -1,13 +1,5 @@
-/* =========================
-   ELEMENTS
-========================= */
-
 const authStatus = document.getElementById("auth-status");
 const logoutBtn = document.getElementById("dashboard-logout");
-
-/* =========================
-   TOKEN STORAGE
-========================= */
 
 function saveToken(token) {
   localStorage.setItem("pkv_token", token);
@@ -23,111 +15,32 @@ function clearToken() {
   updateAuthUI();
 }
 
-/* =========================
-   UI UPDATE
-========================= */
-
-function updateAuthUI() {
-  const token = getToken();
-
-  const loginCard = document.getElementById("login-card");
-  const kvCard = document.getElementById("kv-card");
-  const infoCard = document.getElementById("info-card");
-  const userCard = document.getElementById("user-card");
-
-  if (token) {
-    authStatus.textContent = "Signed in";
-
-    if (loginCard) loginCard.style.display = "none";
-    if (kvCard) kvCard.style.display = "block";
-    if (infoCard) infoCard.style.display = "block";
-    if (userCard) userCard.style.display = "block";
-    if (logoutBtn) logoutBtn.style.display = "block";
-
-    fetchAndShowUser().catch(() => {});
-    loadLRU();   // 🔥 Load LRU after login
-  } else {
-    authStatus.textContent = "Not signed in";
-
-    if (loginCard) loginCard.style.display = "block";
-    if (kvCard) kvCard.style.display = "none";
-    if (infoCard) infoCard.style.display = "none";
-    if (userCard) userCard.style.display = "none";
-    if (logoutBtn) logoutBtn.style.display = "none";
-
-    const ud = document.getElementById("user-details");
-    if (ud) ud.textContent = "Not signed in.";
-  }
+function formatJson(data) {
+  return JSON.stringify(data, null, 2);
 }
 
-/* =========================
-   AUTH
-========================= */
-
-async function login(event) {
-  event.preventDefault();
-
-  const username = document.getElementById("username").value;
-  const password = document.getElementById("password").value;
-
-  try {
-    const body = new URLSearchParams();
-    body.append("username", username);
-    body.append("password", password);
-
-    const response = await fetch("/auth/login", {
-      method: "POST",
-      body,
-      headers: { Accept: "application/json" }
-    });
-
-    if (!response.ok) throw new Error(await response.text());
-
-    const data = await response.json();
-    saveToken(data.access_token);
-
-    document.getElementById("output").textContent =
-      "Signed in successfully.";
-  } catch (error) {
-    document.getElementById("output").textContent =
-      "Login error: " + error.message;
+function formatTime(unixSeconds) {
+  if (!unixSeconds) {
+    return "--";
   }
+
+  return new Date(unixSeconds * 1000).toLocaleTimeString();
 }
-
-async function fetchAndShowUser() {
-  try {
-    const data = await callApi("/auth/me");
-
-    const userDetails = document.getElementById("user-details");
-    if (userDetails)
-      userDetails.textContent = JSON.stringify(data, null, 2);
-
-    authStatus.textContent =
-      data.username || data.full_name || "Signed in";
-  } catch {
-    authStatus.textContent = "Signed in";
-  }
-}
-
-/* =========================
-   GENERIC API
-========================= */
 
 async function callApi(path, options = {}) {
   const token = getToken();
-
-  options.headers = options.headers || {};
+  const request = { ...options, headers: { ...(options.headers || {}) } };
 
   if (token) {
-    options.headers["Authorization"] = "Bearer " + token;
+    request.headers.Authorization = `Bearer ${token}`;
   }
 
-  if (options.body && typeof options.body === "object") {
-    options.headers["Content-Type"] = "application/json";
-    options.body = JSON.stringify(options.body);
+  if (request.body && typeof request.body === "object") {
+    request.headers["Content-Type"] = "application/json";
+    request.body = JSON.stringify(request.body);
   }
 
-  const response = await fetch(path, options);
+  const response = await fetch(path, request);
 
   if (!response.ok) {
     const text = await response.text();
@@ -137,9 +50,107 @@ async function callApi(path, options = {}) {
   return response.json().catch(() => ({}));
 }
 
-/* =========================
-   KV FUNCTIONS
-========================= */
+function updateAuthUI() {
+  const token = getToken();
+  const dashboardShell = document.getElementById("dashboard-shell");
+  const heroPanel = document.querySelector(".hero-panel");
+  const loginCard = document.getElementById("login-card");
+  const kvCard = document.getElementById("kv-card");
+  const infoCard = document.getElementById("info-card");
+  const walCard = document.getElementById("wal-card");
+  const lruCard = document.getElementById("lru-card");
+  const replicationCard = document.getElementById("replication-card");
+  const cliCard = document.getElementById("cli-card");
+  const userDetails = document.getElementById("user-details");
+
+  if (token) {
+    authStatus.textContent = "Signed in";
+    document.body.classList.remove("login-mode");
+    document.body.classList.add("dashboard-mode");
+    if (dashboardShell) dashboardShell.style.display = "grid";
+    if (heroPanel) heroPanel.style.display = "grid";
+    if (loginCard) loginCard.style.display = "none";
+    if (loginCard) loginCard.classList.remove("unlocking");
+    if (kvCard) kvCard.style.display = "block";
+    if (infoCard) infoCard.style.display = "block";
+    if (walCard) walCard.style.display = "block";
+    if (lruCard) lruCard.style.display = "block";
+    if (replicationCard) replicationCard.style.display = "block";
+    if (cliCard) cliCard.style.display = "block";
+    if (logoutBtn) logoutBtn.style.display = "block";
+
+    fetchAndShowUser().catch(() => {
+      authStatus.textContent = "Signed in";
+    });
+    loadLRU().catch(() => {});
+    loadWalInfo().catch(() => {});
+    checkReplica().catch(() => {});
+    return;
+  }
+
+  authStatus.textContent = "Not signed in";
+  document.body.classList.remove("auth-transition");
+  document.body.classList.remove("dashboard-mode");
+  document.body.classList.add("login-mode");
+  if (dashboardShell) dashboardShell.style.display = "none";
+  if (heroPanel) heroPanel.style.display = "none";
+  if (loginCard) loginCard.style.display = "block";
+  if (loginCard) loginCard.classList.remove("unlocking");
+  if (kvCard) kvCard.style.display = "none";
+  if (infoCard) infoCard.style.display = "none";
+  if (walCard) walCard.style.display = "none";
+  if (lruCard) lruCard.style.display = "none";
+  if (replicationCard) replicationCard.style.display = "none";
+  if (cliCard) cliCard.style.display = "none";
+  if (logoutBtn) logoutBtn.style.display = "none";
+  if (userDetails) userDetails.textContent = "Not signed in.";
+}
+
+async function login(event) {
+  event.preventDefault();
+
+  const username = document.getElementById("username").value;
+  const password = document.getElementById("password").value;
+  const loginCard = document.getElementById("login-card");
+
+  try {
+    const body = new URLSearchParams();
+    body.append("username", username);
+    body.append("password", password);
+
+    const response = await fetch("/auth/login", {
+      method: "POST",
+      body,
+      headers: { Accept: "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    const data = await response.json();
+    if (loginCard) loginCard.classList.add("unlocking");
+    document.body.classList.add("auth-transition");
+    await new Promise((resolve) => setTimeout(resolve, 1050));
+    saveToken(data.access_token);
+    document.getElementById("output").textContent = "Signed in successfully.";
+  } catch (error) {
+    if (loginCard) loginCard.classList.remove("unlocking");
+    document.body.classList.remove("auth-transition");
+    document.getElementById("output").textContent = `Login error: ${error.message}`;
+  }
+}
+
+async function fetchAndShowUser() {
+  const data = await callApi("/auth/me");
+  const userDetails = document.getElementById("user-details");
+
+  if (userDetails) {
+    userDetails.textContent = formatJson(data);
+  }
+
+  authStatus.textContent = data.username || data.full_name || "Signed in";
+}
 
 async function setKey(event) {
   event.preventDefault();
@@ -147,20 +158,18 @@ async function setKey(event) {
   const key = document.getElementById("set-key").value;
   const value = document.getElementById("set-value").value;
   const ttl = document.getElementById("set-ttl").value;
-
   const body = { key, value };
-  if (ttl) body.ttl = Number(ttl);
+
+  if (ttl) {
+    body.ttl = Number(ttl);
+  }
 
   try {
     const result = await callApi("/kv", { method: "POST", body });
-
-    document.getElementById("output").textContent =
-      JSON.stringify(result, null, 2);
-
-    loadLRU();  // 🔥 Refresh LRU
+    document.getElementById("output").textContent = formatJson(result);
+    await Promise.all([loadLRU(), loadWalInfo(), checkReplica()]);
   } catch (error) {
-    document.getElementById("output").textContent =
-      "Error: " + error.message;
+    document.getElementById("output").textContent = `Error: ${error.message}`;
   }
 }
 
@@ -170,15 +179,11 @@ async function getKey(event) {
   const key = document.getElementById("get-key").value;
 
   try {
-    const result = await callApi("/kv/" + encodeURIComponent(key));
-
-    document.getElementById("output").textContent =
-      JSON.stringify(result, null, 2);
-
-    loadLRU();  // 🔥 Refresh LRU
+    const result = await callApi(`/kv/${encodeURIComponent(key)}`);
+    document.getElementById("output").textContent = formatJson(result);
+    await loadLRU();
   } catch (error) {
-    document.getElementById("output").textContent =
-      "Error: " + error.message;
+    document.getElementById("output").textContent = `Error: ${error.message}`;
   }
 }
 
@@ -188,33 +193,23 @@ async function deleteKey(event) {
   const key = document.getElementById("delete-key").value;
 
   try {
-    const result = await callApi(
-      "/kv/" + encodeURIComponent(key),
-      { method: "DELETE" }
-    );
-
-    document.getElementById("output").textContent =
-      JSON.stringify(result, null, 2);
-
-    loadLRU();  // 🔥 Refresh LRU
+    const result = await callApi(`/kv/${encodeURIComponent(key)}`, { method: "DELETE" });
+    document.getElementById("output").textContent = formatJson(result);
+    await Promise.all([loadLRU(), loadWalInfo(), checkReplica()]);
   } catch (error) {
-    document.getElementById("output").textContent =
-      "Error: " + error.message;
+    document.getElementById("output").textContent = `Error: ${error.message}`;
   }
 }
-
-/* =========================
-   LRU FUNCTION
-========================= */
 
 async function loadLRU() {
   try {
     const data = await callApi("/admin/store");
-
     const container = document.getElementById("lru-container");
     const info = document.getElementById("lru-info");
 
-    if (!container || !info) return;
+    if (!container || !info) {
+      return;
+    }
 
     container.innerHTML = "";
 
@@ -224,48 +219,118 @@ async function loadLRU() {
       box.innerText = key;
 
       if (index === 0) box.classList.add("lru-oldest");
-      if (index === data.keys_in_order.length - 1)
-        box.classList.add("lru-newest");
+      if (index === data.keys_in_order.length - 1) box.classList.add("lru-newest");
 
       container.appendChild(box);
     });
 
     info.innerText =
-      "Capacity: " + data.capacity +
-      "\nCurrent Size: " + data.current_size +
-      "\nOrder: " + data.keys_in_order.join(" → ");
-
-  } catch (err) {
-    console.error("LRU error:", err);
+      `Capacity: ${data.capacity}\n` +
+      `Current Size: ${data.current_size}\n` +
+      `Order: ${data.keys_in_order.join(" -> ")}`;
+  } catch (error) {
+    document.getElementById("lru-info").textContent = `Error: ${error.message}`;
   }
 }
-
-/* =========================
-   HEALTH
-========================= */
 
 async function health() {
   try {
-    const response = await fetch("/health");
-    const data = await response.json();
-
-    document.getElementById("output").textContent =
-      JSON.stringify(data, null, 2);
+    const data = await callApi("/health");
+    document.getElementById("output").textContent = formatJson(data);
   } catch (error) {
-    document.getElementById("output").textContent =
-      "Error: " + error.message;
+    document.getElementById("output").textContent = `Error: ${error.message}`;
   }
 }
 
-/* =========================
-   EVENTS
-========================= */
+async function loadWalInfo() {
+  try {
+    const data = await callApi("/admin/wal-status");
+    document.getElementById("wal-size").textContent = `${data.log_size_bytes} bytes`;
+    document.getElementById("wal-entries").textContent = data.entries;
+    document.getElementById("wal-info").textContent = formatJson(data);
+  } catch (error) {
+    document.getElementById("wal-info").textContent = `Error: ${error.message}`;
+  }
+}
+
+async function runCompaction() {
+  try {
+    const result = await callApi("/admin/compact", { method: "POST" });
+    document.getElementById("wal-compaction").textContent = new Date().toLocaleTimeString();
+    document.getElementById("wal-info").textContent = formatJson(result);
+    await loadWalInfo();
+  } catch (error) {
+    document.getElementById("wal-info").textContent = `Error: ${error.message}`;
+  }
+}
+
+async function checkReplica() {
+  try {
+    const data = await callApi("/admin/replica-status");
+    const statusText = data.in_sync ? `${data.status} (in sync)` : data.status;
+
+    document.getElementById("replica-status").textContent = statusText;
+    document.getElementById("replica-sync").textContent = formatTime(data.last_sync);
+    document.getElementById("replica-info").textContent = formatJson(data);
+  } catch (error) {
+    document.getElementById("replica-status").textContent = "offline";
+    document.getElementById("replica-info").textContent = `Error: ${error.message}`;
+  }
+}
+
+async function syncReplica() {
+  try {
+    const data = await callApi("/admin/sync", { method: "POST" });
+    document.getElementById("replica-info").textContent = formatJson(data);
+    await checkReplica();
+  } catch (error) {
+    document.getElementById("replica-info").textContent = `Error: ${error.message}`;
+  }
+}
+
+async function runCli() {
+  const raw = document.getElementById("cli-input").value.trim();
+  const input = raw.split(/\s+/);
+  const cmd = (input[0] || "").toUpperCase();
+
+  try {
+    let result;
+
+    if (cmd === "SET") {
+      result = await callApi("/kv", {
+        method: "POST",
+        body: { key: input[1], value: input[2] },
+      });
+    } else if (cmd === "GET") {
+      result = await callApi(`/kv/${encodeURIComponent(input[1])}`);
+    } else if (cmd === "DEL") {
+      result = await callApi(`/kv/${encodeURIComponent(input[1])}`, { method: "DELETE" });
+    } else {
+      throw new Error("Use SET <key> <value>, GET <key>, or DEL <key>.");
+    }
+
+    document.getElementById("cli-output").textContent = formatJson(result);
+    await Promise.all([loadLRU(), loadWalInfo(), checkReplica()]);
+  } catch (error) {
+    document.getElementById("cli-output").textContent = `Error: ${error.message}`;
+  }
+}
 
 document.getElementById("login-form").addEventListener("submit", login);
 document.getElementById("set-form").addEventListener("submit", setKey);
 document.getElementById("get-form").addEventListener("submit", getKey);
 document.getElementById("delete-form").addEventListener("submit", deleteKey);
 document.getElementById("health-btn").addEventListener("click", health);
+document.getElementById("refresh-lru").addEventListener("click", loadLRU);
+document.getElementById("clear-log").addEventListener("click", () => {
+  clearToken();
+  document.getElementById("output").textContent = "Saved token cleared.";
+});
+document.getElementById("refresh-wal").addEventListener("click", loadWalInfo);
+document.getElementById("compact-wal").addEventListener("click", runCompaction);
+document.getElementById("check-replica").addEventListener("click", checkReplica);
+document.getElementById("sync-replica").addEventListener("click", syncReplica);
+document.getElementById("run-cli").addEventListener("click", runCli);
 
 if (logoutBtn) {
   logoutBtn.addEventListener("click", () => {
@@ -273,60 +338,5 @@ if (logoutBtn) {
     document.getElementById("output").textContent = "Signed out.";
   });
 }
-/* =========================
-   DASHBOARD CONTROL
-========================= */
 
-function showDashboard() {
-
-  const dashboard = document.getElementById("dashboard");
-  const loginCard = document.getElementById("login-card");
-  const logoutBtn = document.getElementById("dashboard-logout");
-
-  if (dashboard) dashboard.style.display = "block";
-  if (loginCard) loginCard.style.display = "none";
-  if (logoutBtn) logoutBtn.style.display = "block";
-
-}
-
-function hideDashboard() {
-
-  const dashboard = document.getElementById("dashboard");
-  const loginCard = document.getElementById("login-card");
-  const logoutBtn = document.getElementById("dashboard-logout");
-
-  if (dashboard) dashboard.style.display = "none";
-  if (loginCard) loginCard.style.display = "block";
-  if (logoutBtn) logoutBtn.style.display = "none";
-
-}
-/* =========================
-   LRU VISIBILITY CONTROL
-========================= */
-
-const lruCard = document.getElementById("lru-card");
-const loginForm = document.getElementById("login-form");
-
-if (loginForm) {
-
-loginForm.addEventListener("submit", function(){
-
-    // hide login section
-    document.getElementById("login-card").style.display = "none";
-
-    // show LRU section
-    if(lruCard){
-        lruCard.style.display = "block";
-    }
-
-});
-
-}
-document.getElementById("dashboard-logout").addEventListener("click", function(){
-
-document.getElementById("login-card").style.display = "block";
-
-document.getElementById("lru-card").style.display = "none";
-
-});
 updateAuthUI();

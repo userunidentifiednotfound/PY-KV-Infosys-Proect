@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Valut Sync Library</title>
+    <link rel="stylesheet" href="/static/library.css">
+</head>
+<body>
+    <main class="library-app">
+        <section class="library-shell">
+            <aside class="library-nav">
+                <div class="library-brand">
+                    <div class="brand-lockup">
+                        <img src="/static/logo.svg" alt="Valut Sync logo" class="brand-logo">
+                        <div>
+                    <span class="side-eyebrow">Library Suite</span>
+                    <h2>Valut Sync</h2>
+                    <p>Move quickly across inventory, activity, and live shelf operations.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="nav-links">
+                    <a href="#library-overview" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.75v-5.5h-4.5V21H5a1 1 0 0 1-1-1z"/></svg>
+                        </span>
+                        <span>Overview</span>
+                    </a>
+                    <a href="#stats-grid" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 18h3V9H5zm5 0h4V5h-4zm6 0h3v-7h-3z"/></svg>
+                        </span>
+                        <span>Stats</span>
+                    </a>
+                    <a href="#inventory-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h10l4 4v12H6z"/><path d="M16 4v4h4" fill="#0b1530"/></svg>
+                        </span>
+                        <span>Add Books</span>
+                    </a>
+                    <a href="#activity-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h4l2-4 4 8 2-4h4"/></svg>
+                        </span>
+                        <span>Live Activity</span>
+                    </a>
+                    <a href="#bookshelf-card" class="nav-link">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4v16H5zm5 0h4v16h-4zm5 0h4v16h-4z"/></svg>
+                        </span>
+                        <span>Bookshelf</span>
+                    </a>
+                    <a href="/" class="nav-link nav-link-accent">
+                        <span class="nav-icon">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11.5 12 5l8 6.5V20a1 1 0 0 1-1 1h-4.75v-5.5h-4.5V21H5a1 1 0 0 1-1-1z"/></svg>
+                        </span>
+                        <span>Main Dashboard</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <div class="library-content">
+                <section class="library-hero" id="library-overview">
+                    <div>
+                        <span class="eyebrow">Live circulation workspace</span>
+                        <h1>Valut Sync Library</h1>
+                        <p>
+                            Track inventory, circulation, and borrower activity in real time through a bright,
+                            polished dashboard designed to feel energetic, professional, and easy to navigate.
+                        </p>
+                        <div class="hero-actions">
+                            <a class="hero-btn secondary" href="/">Back to Main Dashboard</a>
+                        </div>
+                    </div>
+                    <div class="hero-panel">
+                        <div class="hero-pill">
+                            <span class="pill-label">Session</span>
+                            <span class="pill-value" id="library-auth-status">Checking session...</span>
+                        </div>
+                        <div class="hero-pill">
+                            <span class="pill-label">Server Time</span>
+                            <span class="pill-value" id="server-time">--</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="stats-grid" id="stats-grid">
+                    <article class="stat-card coral">
+                        <span class="stat-label">Total Titles</span>
+                        <strong class="stat-value" id="stat-titles">0</strong>
+                        <span class="stat-note">Unique books currently registered.</span>
+                    </article>
+                    <article class="stat-card aqua">
+                        <span class="stat-label">Copies Available</span>
+                        <strong class="stat-value" id="stat-available">0</strong>
+                        <span class="stat-note">Copies ready to be issued right now.</span>
+                    </article>
+                    <article class="stat-card gold">
+                        <span class="stat-label">Borrowed Now</span>
+                        <strong class="stat-value" id="stat-borrowed">0</strong>
+                        <span class="stat-note">Active circulation across all titles.</span>
+                    </article>
+                    <article class="stat-card violet">
+                        <span class="stat-label">Categories</span>
+                        <strong class="stat-value" id="stat-categories">0</strong>
+                        <span class="stat-note">Genres and collections in the library.</span>
+                    </article>
+                </section>
+
+                <section class="workspace-grid">
+                    <article class="glass-card" id="inventory-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Add New Book</h2>
+                                <p>Register titles, copies, authors, and categories into the live system.</p>
+                            </div>
+                            <span class="card-tag">Inventory</span>
+                        </div>
+
+                        <form id="book-form" class="form-grid">
+                            <label>
+                                Title
+                                <input id="book-title" required placeholder="The Design of Everyday Things">
+                            </label>
+                            <label>
+                                Author
+                                <input id="book-author" required placeholder="Don Norman">
+                            </label>
+                            <label>
+                                Category
+                                <input id="book-category" required placeholder="Design">
+                            </label>
+                            <label>
+                                Copies
+                                <input id="book-copies" type="number" min="1" max="50" value="3" required>
+                            </label>
+                            <button type="submit" class="hero-btn">Add Book</button>
+                        </form>
+                    </article>
+
+                    <article class="glass-card" id="activity-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>Live Activity</h2>
+                                <p>Books update automatically every 3 seconds so multiple operators stay in sync.</p>
+                            </div>
+                            <span class="card-tag accent">Real Time</span>
+                        </div>
+                        <pre id="library-feed" class="feed-panel">Waiting for live data...</pre>
+                    </article>
+                </section>
+
+                <section class="table-card glass-card" id="bookshelf-card">
+                    <div class="card-head">
+                        <div>
+                            <h2>Bookshelf</h2>
+                            <p>Borrow, return, edit, and remove books directly from the live inventory.</p>
+                        </div>
+                        <div class="table-tools">
+                            <input id="search-books" placeholder="Search title, author, or category">
+                            <button id="refresh-library" class="hero-btn small">Refresh</button>
+                        </div>
+                    </div>
+
+                    <div id="books-grid" class="books-grid"></div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/library.js"></script>
+</body>
+</html>
